@@ -21,3 +21,44 @@ model Ticket {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 }
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  AGENT
+  USER
+}
+
+enum UserStatus {
+  INVITED
+  ACTIVE
+  DISABLED
+}
+
+model User {
+  id              String       @id @default(uuid())
+  email           String       @unique
+  name            String
+  passwordHash    String?
+  role            Role
+  status          UserStatus   @default(INVITED)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  invitations     Invitation[] @relation("InvitedUser")
+  sentInvitations Invitation[] @relation("InvitedBy")
+}
+
+model Invitation {
+  id          String    @id @default(uuid())
+  tokenHash   String    @unique
+  expiresAt   DateTime
+  acceptedAt  DateTime?
+  revokedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  userId      String
+  user        User      @relation("InvitedUser", fields: [userId], references: [id])
+  invitedById String
+  invitedBy   User      @relation("InvitedBy", fields: [invitedById], references: [id])
+
+  @@index([userId])
+}

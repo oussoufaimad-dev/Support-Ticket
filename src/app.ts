@@ -1,5 +1,6 @@
 import express from "express";
 import ticketRoutes from "./routes/ticket.routes.js";
+import invitationRoutes from "./routes/invitation.routes.js";
 import { notFound } from "./middlewares/notFound.middleware.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
 
@@ -12,6 +13,7 @@ app.get("/health", (_req, res) => {
 });
 
 app.use("/tickets", ticketRoutes);
+app.use("/invitations", invitationRoutes);
 
 // L'ordre compte : routes d'abord, puis 404, puis le gestionnaire d'erreurs
 app.use(notFound);
